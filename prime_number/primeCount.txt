@@ -1,0 +1,21 @@
+求解小于某个数的素数的个数：
+public class Solution {
+    public int countPrimes(int n) {
+        int result=0;
+        if(n==0||n==1||n==2) return 0;
+        int[] array=new int[n];
+        array[0]=1;array[1]=1;
+        for(int i=2;i<array.length;i++){
+            if(array[i]!=1){
+                result++;
+                for(int j=i*2;j<array.length;j=j+i){
+                    array[j]=1;
+                }
+            }
+        }
+        return result;
+        
+    }
+}
+数组array中元素为0的，就是要求的那些素数
+http://tieba.baidu.com/p/2442566054
