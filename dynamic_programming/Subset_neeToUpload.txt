@@ -1,0 +1,63 @@
+SubsetsII：
+_____________________________________________________________________________________________________________________________
+给定数组，数组中包含重复元素，如[4,4,1]这种，求出该数组的所有子集。采用动态规划求解。
+思路:
+    先求出[4]的子集List<List<Integer>>形式，然后往之前的子集添加4，同时要把原先的子集也加入，注意要当心在加入新元素后与原先已有的元素重合（例如在原先的空集上加了新的4后得到子集[4]，会与原先就有的[4]重合，代码***********处解决此问题）。
+————————————————————————————————————————————
+public List<List<Integer>> subsets(int[] nums){
+
+		//################
+		Arrays.sort(nums);
+
+		List<List<List<Integer>>> result=new ArrayList<>();		
+		if(nums.length==0) return null;
+			
+		List<Integer> li1=new ArrayList<Integer>();
+		List<Integer> li2=new ArrayList<Integer>();
+		li2.add(nums[0]);
+		List<List<Integer>> temp=new ArrayList<>();
+		
+		temp.add(li1);temp.add(li2);
+		result.add(temp);
+		
+		if(nums.length==1) return result.get(0);
+		
+		for(int i=1;i<nums.length;i++){
+			
+			List<List<Integer>> preList=result.get(i-1);
+			List<List<Integer>> nowAddList=new ArrayList<>();
+			
+			for(int index=0;index<preList.size();index++){
+//				System.out.println("inner loop ");
+				
+				List<Integer> newL=new ArrayList<Integer>();
+				List<Integer> exist=preList.get(index);
+				
+				nowAddList.add(exist);
+				
+				for(Integer c:exist){
+					newL.add(c);
+				}				
+				newL.add(nums[i]);
+				
+				if(!preList.contains(newL)){//*********************************
+					nowAddList.add(newL);
+				}				
+			}
+			result.add(nowAddList);
+		}
+		
+		for (List<List<Integer>> l : result) {
+			for (List<Integer> li : l) {
+				System.out.print(li+",");
+			}
+			System.out.println();
+		}		
+		return result.get(result.size()-1);			
+	}
+——————————————————————————————————————————————————————
+重点！！！
+虽然上面解决了新形成的子集与原先已有子集重合的问题，但是会出现在产生新子集的过程中，发生的新子集间的重合，这个问题我一直想着是不是要在产生子集时判断是否与新产生的子集有相同的情况，却发现在java中：两个list的equals比较的不是内容是否相同，所以[1,2]与[2,1]两个list是不同的，所以如果已经加入了[1,2]，调用contains([2,1])时，返回false；
+解决办法：从discuss中得到的想法，真的很机智，只要在对nums中元素遍历前先对nums做一个排序即可！！！！！！！这样就不会出现[1,4]和[4,1]同时出现的情况！！！！机智！！！！！
+
+_______________________________________________________________________________________________________________________________	

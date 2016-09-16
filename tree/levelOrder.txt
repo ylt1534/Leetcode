@@ -1,0 +1,41 @@
+树的层次遍历：
+思路:
+定义两个队列，一个队列中的元素是树中某一层的元素，通过循环取出该队列的队头元素，将该元素的左右孩子放到另一个对列中直到当前队列为空。可以看到这两个队列中分别轮流存放树的每一层
+__________________________________________________________________________________________________________
+——————————————————————————————————————————
+public void levelOrder(TreeNode treeNode){
+	if(treeNode==null) System.out.println("tree is null");		
+	Queue<TreeNode> queue1=new LinkedList<>();
+	Queue<TreeNode> queue2=new LinkedList<>();
+	
+	queue1.add(treeNode);
+	
+	while(!queue1.isEmpty()||!queue2.isEmpty()){
+		if(!queue1.isEmpty()){				
+			while(!queue1.isEmpty()){
+				TreeNode firstNode=queue1.poll();
+				System.out.println(firstNode.val+",");
+				if(firstNode.left!=null){
+					queue2.add(firstNode.left);
+				}
+				if(firstNode.right!=null){
+					queue2.add(firstNode.right);
+				}
+			}	
+		}else{
+			while(!queue2.isEmpty()){
+				TreeNode firstNode=queue2.poll();
+				System.out.println(firstNode.val+",");
+				if(firstNode.left!=null){
+					queue1.add(firstNode.left);
+				}
+				if(firstNode.right!=null){
+					queue1.add(firstNode.right);
+				}
+			}
+		}
+	}						
+}
+—————————————————————————————————————————
+S型层次遍历：就是把上面使用的queue换为stack，注意左右子节点添加顺序，就可以了
+__________________________________________________________________________________________________________

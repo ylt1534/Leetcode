@@ -1,0 +1,100 @@
+_________________________________________________________________________________
+Range Sum Query - Immutable：一维
+Given an integer array nums, find the sum of the elements between indices i and j (i ≤ j), inclusive.
+————————————————————————
+TLE:
+public class NumArray {
+    private int[] nums;
+    public NumArray(int[] nums) {
+        this.nums=nums;
+    }
+    public int sumRange(int i, int j) {
+        int[] sum=new int[nums.length];
+        sum[0]=nums[0];
+        for(int n=1;n<sum.length;n++){
+            sum[n]=sum[n-1]+nums[n];
+        }
+        return sum[j]-sum[i]+nums[i];
+    }
+}
+该版本发生超时。
+题目提示:sumRange方法会被调用多次，该版本中的sumRange方法每被调用一次，都要new一个sum数组，而题目表示该给定的数组nums不改变，所以可以将new sum，以及向sum中添加数据的操作放到构造函数里。如下版本
+————————————————————————
+Accepted：
+public class NumArray {
+    private int[] nums;
+    private int[] sum;
+    public NumArray(int[] nums) {
+        this.nums=nums;
+        sum=new int[nums.length];
+        if(nums.length>0){
+             sum[0]=nums[0];
+             for(int n=1;n<sum.length;n++){
+                sum[n]=sum[n-1]+nums[n];
+            }
+        }
+    }
+    public int sumRange(int i, int j) {
+        return sum[j]-sum[i]+nums[i];
+    }
+}
+————————————————————————
+________________________________________________________________________________
+Range Sum Query 2D - Immutable
+
+Given a 2D matrix matrix, find the sum of the elements inside the rectangle defined by its upper left corner (row1, col1) and lower right corner (row2, col2).
+
+Given matrix = [
+  [3, 0, 1, 4, 2],
+  [5, 6, 3, 2, 1],
+  [1, 2, 0, 1, 5],
+  [4, 1, 0, 1, 7],
+  [1, 0, 3, 0, 5]
+]
+
+sumRegion(2, 1, 4, 3) -> 8
+sumRegion(1, 1, 2, 2) -> 11
+sumRegion(1, 2, 2, 4) -> 12
+——————————————————————————
+public class NumMatrix {
+
+    int[][] sumMatrix;
+    int[][] matrix;
+    public NumMatrix(int[][] matrix) {
+        this.matrix=matrix;
+        if(matrix.length!=0){
+            int rowSum=matrix.length;int colSum=matrix[0].length;
+            sumMatrix=new int[rowSum][colSum];
+             // sumMatrix[0][0]=matrix[0][0];
+            for(int i=0;i<rowSum;i++){
+                for(int j=0;j<colSum;j++){
+                    if(i==0&&j==0) {sumMatrix[i][j]=matrix[0][0];continue;}
+                    if(i==0) {sumMatrix[i][j]=sumMatrix[0][j-1]+matrix[i][j];continue;}
+                    if(j==0) {sumMatrix[i][j]=sumMatrix[i-1][0]+matrix[i][j];continue;}
+                    int re=0;
+                    re+=sumMatrix[i][j-1];
+                    for(int s=0;s<=i;s++){
+                        re+=matrix[s][j];
+                    }
+                    sumMatrix[i][j]=re;//……………………………………>
+                }
+            
+            }
+        }
+    }
+    public int sumRegion(int row1, int col1, int row2, int col2) {
+        
+        if(col1==0&&row1==0) return sumMatrix[row2][col2];
+        if(col1==0) return sumMatrix[row2][col2]-sumMatrix[row1-1][col2];
+        if(row1==0) return sumMatrix[row2][col2]-sumMatrix[row2][col1-1];
+        
+        int s1=sumMatrix[row2][col1-1]-sumMatrix[row1][col1-1];//判断col1
+    	int s2=sumMatrix[row1-1][col2]-sumMatrix[row1-1][col1];
+    	    	
+        return sumMatrix[row2][col2]-sumMatrix[row1][col1]+matrix[row1][col1]-s1-s2;
+    }
+}
+————————————————————————————
+图中……………………>处对于i,j均不为0时sumMatrix[i][j]可以改写为：
+sumMatrix[i][j]=sumMatrix[i-1][j] + sumMatrix[i][j - 1] - sumMatrix[i-1][j-1] + matrix[i][j];
+_________________________________________________________________________________________________

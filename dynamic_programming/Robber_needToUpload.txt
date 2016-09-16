@@ -1,0 +1,24 @@
+
+
+public int maxRobberValue(int[] nums){
+		
+	int numsLen=nums.length;
+	
+	if(numsLen==0) return 0;
+	if(numsLen==1) return nums[0];
+	
+	int[] sum=new int[numsLen];
+		
+	sum[0]=nums[0];
+	sum[1]=nums[1]>nums[0]?nums[1]:nums[0];
+		
+	for(int i=2;i<sum.length;i++){
+		int value;
+		int prePrePlusSelf=sum[i-2]+nums[i];
+		int pre=sum[i-1];
+		value=prePrePlusSelf>pre?prePrePlusSelf:pre;			
+		sum[i]=value;
+	}
+		
+	return sum[numsLen-1];
+}

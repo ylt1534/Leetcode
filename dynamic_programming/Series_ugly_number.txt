@@ -1,0 +1,77 @@
+_________________________________________________________________________
+***Ugly Number
+Write a program to check whether a given number is an ugly number.
+Ugly numbers are positive numbers whose prime factors only include 2, 3, 5. For example, 6, 8 are ugly while 14 is not ugly since it includes another prime factor 7.
+Note that 1 is typically treated as an ugly number. 
+如果一个数除以（若干次2/若干次3/若干次5），最后可以得到结果为1，那么这个数是ugly number：
+————————————————————————
+public class Solution {
+    public boolean isUgly(int num) {
+        if(num<=0){
+            return false;
+        }
+        while(num%2==0||num%3==0||num%5==0){
+            if(num%2==0)
+                num=num/2;
+            if(num%3==0)
+                num=num/3;
+            if(num%5==0)
+                num=num/5;
+        }
+        if(num==1){
+            return true;
+        }else{
+            return false;
+        }
+        
+    }
+}
+————————————————————————
+________________________________________________________________________________
+***Ugly Number2（使用下treeset？？）
+Write a program to find the n-th ugly number.
+Ugly numbers are positive numbers whose prime factors only include 2, 3, 5. For example, 1, 2, 3, 4, 5, 6, 8, 9, 10, 12 is the sequence of the first 10 ugly numbers.
+
+首先将1放入，对1做*2，*3，*5都是ugly number，所以可以动态规划解决；
+在不断放入的过程中，需要排序，想到使用Priority queue！
+但是Priority queue不保证加入的元素唯一（**hint**考虑到尽管不唯一，但是相同的数在priority queue中是排在一起的，所以可以在取出操作时去除即可，也就是把这个去重的操作留到取数时进行）
+
+对于Queue的认识总结:
+    1、peek(),element()均是获取但不移除队头，但是element方法在队列为空时抛出Excetion，peek()则返回一个null；
+    2、poll(),remove()均是获取并移除头，但是remove方法在队列为空时抛出异常，poll返回null；
+    综上:一般都使用peek与poll方法。
+
+————————————————————————
+public class Solution {
+    public int nthUglyNumber(int n) {
+        
+        if(n==1) return 1;
+	
+        //题目要求的数目比较大，所以使用Long型，可以存储比Integer更大的数
+        PriorityQueue<Long> pq=new PriorityQueue<Long>();
+	
+	//由于是Long型，所以加入数字时，后面添加l
+        pq.add(1l);
+        
+	//依次把前n个元素取出进行*2，*3，*5放入
+        for(int i=1;i<n;i++){
+            
+            //取出队头元素（最小）
+	    long get=pq.poll();
+            
+	    //去重
+            while(pq.size()!=0&&pq.peek()==get){
+                pq.poll();
+            }
+            
+            pq.add(get*2);
+            pq.add(get*3);
+            pq.add(get*5);
+        }
+        
+	//函数返回值是int型，所以调用调用类Long下的intValue()，将Long类转为int值
+        return pq.poll().intValue();
+    }
+}
+————————————————————————
+ 

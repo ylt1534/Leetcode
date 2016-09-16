@@ -1,0 +1,38 @@
+Integer break：
+将一个数字拆成几个数字加和形式，使拆成的数字乘积最大。例如10=3+3+4，3*3*4=36.
+网上很多做法可以发现一个数字拆成2，3后就不要再拆，所以可以对该数字尽可能拆成3，余数为2，后不要再拆。
+动态规划也可解决问题
+————————————————————————————————————————
+public int integerBreak(int n) {
+        
+        if(n==2||n==3) return n-1;//对于n==2和n==3的情况特殊处理一下
+        
+        int[] result=new int[n+1];
+        
+        result[1]=1;
+        result[2]=2;result[3]=3;//这里把result中2与3下标的值置为2，3确保一个数字拆到2，3之后不会再拆
+        
+        for(int i=4;i<n+1;i++){
+            for(int j=1;j<i;j++){
+
+		//这里result[j]*result[i-j]改成j*result[i-j]，或者result[j]*(i-j)均可，
+                result[i]=Math.max(result[i],result[j]*result[i-j]);
+            }
+        }
+        return result[n];
+    }
+
+——————————————————————————————————————
+一个不用对2，3做特殊处理的办法:
+ public int integerBreak(int n) {
+    if(n > 3) n++;//对于大于3的情况，先将n+1
+    int[] dp = new int[n+1];//大于3的情况下，得到的是一个更长的数组，debug一下可以知道具体实现
+    dp[1] = 1;
+    for(int i = 2; i <=n; i++) {
+        for(int j = 1; j < i; j++) {
+            dp[i] = Math.max(dp[i], dp[j] * (i-j));
+        }
+    }
+    return dp[n];
+}
+——————————————————————————————————————

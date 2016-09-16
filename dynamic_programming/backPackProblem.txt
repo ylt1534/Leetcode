@@ -1,0 +1,55 @@
+背包问题代码：动态规划解决
+______________________________________________________________________________________________________________________
+——————————————————————————————————————————————————
+public void solution(int[] weights,int[] values,int givenWeights){
+		int numOfItems=weights.length;
+		int column=givenWeights+1;
+		int[][] resultMatrix=new int[numOfItems][column];
+		
+		for(int j=0;j<column;j++){
+			if(j>=weights[0]){
+				resultMatrix[0][j]=values[0];//首先初始化resultMatrix的第一行
+			}
+			//java自动初始化为0
+		}
+		
+		for(int i=1;i<numOfItems;i++){
+			for(int j=0;j<column;j++){				
+				int bestValue;
+				if(j<weights[i]){
+					bestValue=resultMatrix[i-1][j];
+				}else{
+					//*********************
+					bestValue=Math.max(resultMatrix[i-1][j-weights[i]]+values[i],resultMatrix[i-1][j]);					
+				}
+				resultMatrix[i][j]=bestValue;
+			}
+		}
+		
+		for (int[] is : resultMatrix) {
+			for (int i : is) {
+				System.out.print(i+",");
+			}
+			System.out.println();
+		}
+	}
+———————————————————————————————————————————————
+//******************处为代码关键所在:
+//第i行j列中的element表示：在有第i产品加入后，在给定重量j下的最大价值
+//比较大小：1、若将第i产品加入，最大价值（第i-1行第【给定重量减去第i产品重量】列的element值加上第i产品的value值），
+	    2、不加入第i产品，最大价值（第i-1行第j列值）
+
+测试数据:
+int[] weights={0,1,3,4,5};
+int[] values={0,2,5,7,8};
+int givenWeights=8;
+
+测试结果:
+0,0,0,0,0,0,0,0,0,
+0,2,2,2,2,2,2,2,2,
+0,2,2,5,7,7,7,7,7,
+0,2,2,5,7,9,9,12,14,
+0,2,2,5,7,9,10,12,14,
+
+可见:给定重量依次为0~8时的最大价值分别为：0,2,2,5,7,9,10,12,14,
+______________________________________________________________________________________________________________________________

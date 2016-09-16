@@ -1,0 +1,129 @@
+I:
+对于给定字符串，找到可以将其分割为全部都是回文字串的方式，
+input: aaa
+output:[[a, a, a], [aa, a], [aaa], [a, aa]]
+思路:动态规划，每加入一个新的字符，由于新字符本身为回文，所以在其前一个字符已得的切分方式上，再添加一个当前字符；然后将该字符依次与前面的字符组合成子串，判断该子串是否为回文，若是，到该字串的头字符的前一个字符已得的组合方式加上当前所得回文子串
+_____________________________________________________________________________________________________________________
+public class Solution {
+    
+     public  List<List<String>> partition(String s) {
+        int len=s.length();
+        if(len==0) return null;
+        List<List<List<String>>> result=new ArrayList<List<List<String>>>();
+        char[] array=s.toCharArray();
+        boolean isP;
+        
+        List<List<String>> temp;
+        for(int i=0;i<len;i++){
+            if(i==0){
+                temp=new ArrayList<List<String>>();
+                List<String> tempIn=new ArrayList<String>();
+                tempIn.add(String.valueOf(array[0]));
+                temp.add(tempIn);
+                result.add(temp);
+            }else{
+//                temp=new ArrayList<List<String>>(result.get(i-1));
+                temp=new ArrayList<List<String>>();
+                for (List<String> list : result.get(i-1)) {
+			List<String> teList=new ArrayList<>(list);
+//				teList.add(String.valueOf(array[i]));
+				temp.add(teList);
+				}
+                for(List<String> u:temp){
+                    u.add(String.valueOf(array[i]));//仅temp变
+                }
+                for(int j=0;j<i;j++){
+                    isP=this.isPalin(array,j,i);
+                    if(!isP){
+                        continue;
+                    }else{
+                        if(j==0){
+                            List<String> tempIn=new ArrayList<String>();
+                            tempIn.add(s.substring(0,i+1));temp.add(tempIn);
+                        }else{
+                            List<List<String>> ff=new ArrayList<List<String>>(/*result.get(j-1)*/);
+                            
+                            for (List<String> list : result.get(j-1)) {
+								List<String> teList=new ArrayList<>(list);
+								ff.add(teList);
+							}
+                             for(List<String> f:ff){
+                                    f.add(s.substring(j,i+1));
+                                    temp.add(f);
+                            }
+                        }
+                    }
+                }    
+                result.add(temp);
+            }
+        }
+        return result.get(len-1);
+    }
+    
+    
+    public boolean isPalin(char[] array,int start,int end){
+    	int i=start,j=end;
+    	while(i<=j){
+    		if(array[i]!=array[j]){
+    			return false;
+    		}
+    		i++;j--;
+    	}
+    	return true;
+    }
+    
+    
+}
+
+
+————————————————————————————————————————————————————————————
+
+II:
+找到将一个字符串切分为全部回文子串的最小切割次数。
+input:  aabbbccc
+output: 2
+
+简单
+——————————————————————————————
+
+public int minCut(String s) {
+        int len=s.length();
+        if(len==0) return 0;
+        int[] mins=new int[len];
+        char[] array=s.toCharArray();
+        boolean isP;
+        
+        for(int i=0;i<len;i++){
+            if(i==0){
+                mins[0]=0;
+            }else{
+            	int min=Integer.MAX_VALUE;
+				min=Math.min(min,mins[i-1]+1);
+                for(int j=0;j<i;j++){
+                    isP=this.isPalin(array,j,i);
+                    if(!isP){
+                        continue;
+                    }else{
+                        if(j==0){
+                            min=0;
+                        }else{
+                            min=Math.min(min, mins[j-1]+1);
+                        }
+                    }
+                }    
+                mins[i]=min;
+            }
+        }
+        return mins[len-1];
+    }
+    
+     public boolean isPalin(char[] array,int start,int end){
+    	int i=start,j=end;
+    	while(i<=j){
+    		if(array[i]!=array[j]){
+    			return false;
+    		}
+    		i++;j--;
+    	}
+    	return true;
+    }
